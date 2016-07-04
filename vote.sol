@@ -1,0 +1,5 @@
+contract Vote {
+  function Vote() {
+
+  }
+}
