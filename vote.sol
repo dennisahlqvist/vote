@@ -3,7 +3,9 @@ contract Vote {
   enum VoteTypes { NotVoted, Yes, No }
   mapping (address => VoteTypes) votes;
   address[] voted;
-  function Vote() {
+  string question;
+  function Vote(string _question) {
+    question = _question;
     owner=msg.sender;
     votes[0x0000000000000000000000000000000000000000]=VoteTypes.NotVoted;
   }
