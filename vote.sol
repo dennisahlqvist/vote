@@ -4,6 +4,7 @@ contract Vote {
   mapping (address => VoteTypes) votes;
   address[] voted;
   string public question;
+  DAO theDAO = DAO(0xbb9bc244d798123fde783fcc1c72d3bb8c189413);
   function Vote(string _question) {
     question = _question;
     owner=msg.sender;
@@ -61,9 +62,33 @@ contract Vote {
     return _noVotes;
   }
   
+
+  function countYesVotesWeightedByTokens() constant returns (uint yesVotesWeightedByTokens){
+    uint _yesVotes = 0;
+    for(uint i=0; i<voted.length;i++){
+      if(votes[voted[i]]==VoteTypes.Yes){
+        _yesVotes = _yesVotes + theDAO.balanceOf(voted[i]);
+      }
+    }
+    return _yesVotes;
+  }
+
+  function countNoVotesWeightedByTokens() constant returns (uint noVotesWeightedByTokens){
+    uint _noVotes = 0;
+    for(uint i=0; i<voted.length;i++){
+      if(votes[voted[i]]==VoteTypes.No){
+        _noVotes = _noVotes + theDAO.balanceOf(voted[i]);
+      }
+    }
+    return _noVotes;
+  }
+
   function kill() {
     if (msg.sender==owner){
       suicide(owner);
     }
   }
+}
+contract DAO {
+    function balanceOf(address _owner) constant returns (uint256 balance);
 }
