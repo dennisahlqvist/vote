@@ -1,10 +1,11 @@
 contract Vote {
   address owner;
-  enum VoteTypes { Yes, No }
+  enum VoteTypes { NotVoted, Yes, No }
   mapping (address => VoteTypes) votes;
   address[] voted;
   function Vote() {
     owner=msg.sender;
+    votes[0x0000000000000000000000000000000000000000]=VoteTypes.NotVoted;
   }
 
   function voteYes() returns (bool success) {
@@ -19,6 +20,15 @@ contract Vote {
     return true;
   }
 
+  function removeVote() {
+    if(!addressInArray(msg.sender)) throw;
+    votes[msg.sender]=VoteTypes.NotVoted;
+    for(uint i=0; i<voted.length;i++){
+      if(voted[i]==msg.sender){
+        voted[i]=0x0000000000000000000000000000000000000000;
+      }
+    }
+  }
 
   function addressInArray(address inAddress) private returns (bool inArray){
     for(uint i=0; i<voted.length;i++){
