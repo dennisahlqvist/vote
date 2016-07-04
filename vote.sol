@@ -40,6 +40,27 @@ contract Vote {
     }
     return false;
   }
+
+  function countYesVotes() constant returns (uint yesVotes){
+    uint _yesVotes = 0;
+    for(uint i=0; i<voted.length;i++){
+      if(votes[voted[i]]==VoteTypes.Yes){
+        _yesVotes++;
+      }
+    }
+    return _yesVotes;
+  }
+
+  function countNoVotes() constant returns (uint noVotes){
+    uint _noVotes = 0;
+    for(uint i=0; i<voted.length;i++){
+      if(votes[voted[i]]==VoteTypes.No){
+        _noVotes++;
+      }
+    }
+    return _noVotes;
+  }
+  
   function kill() {
     if (msg.sender==owner){
       suicide(owner);
