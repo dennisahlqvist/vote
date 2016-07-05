@@ -90,8 +90,6 @@ contract Vote {
     return ( _yesVotes, _noVotes );
   }
 
-  }
-
   function kill() onlyOwner {
     suicide(owner);
   }
