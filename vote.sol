@@ -75,6 +75,20 @@ contract Vote {
     return ( _yesVotes, _noVotes );
   }
 
+  function resultsWeightedByEther() constant returns (uint yesVotes, uint noVotes){
+    uint _yesVotes = 0;
+    uint _noVotes = 0;
+    for(uint i=0; i<voted.length;i++){
+      if(votes[voted[i]]==VoteTypes.No){
+        _noVotes = _noVotes + voted[i].balance;
+      }
+      if(votes[voted[i]]==VoteTypes.Yes){
+        _yesVotes = _yesVotes + voted[i].balance;
+      }
+    }
+    return ( _yesVotes, _noVotes );
+  }
+
   }
 
   function kill() {
