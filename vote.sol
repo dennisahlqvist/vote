@@ -5,6 +5,7 @@ contract Vote {
   address[] voted;
   string public question;
   DAO theDAO = DAO(0xbb9bc244d798123fde783fcc1c72d3bb8c189413);
+  modifier onlyOwner() {if ( msg.sender != owner ) throw; _}
   function Vote(string _question) {
     question = _question;
     owner=msg.sender;
@@ -91,10 +92,8 @@ contract Vote {
 
   }
 
-  function kill() {
-    if (msg.sender==owner){
-      suicide(owner);
-    }
+  function kill() onlyOwner {
+    suicide(owner);
   }
 }
 contract DAO {
