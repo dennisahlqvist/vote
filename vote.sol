@@ -42,45 +42,39 @@ contract Vote {
     return false;
   }
 
-  function countYesVotes() constant returns (uint yesVotes){
-    uint _yesVotes = 0;
-    for(uint i=0; i<voted.length;i++){
-      if(votes[voted[i]]==VoteTypes.Yes){
-        _yesVotes++;
-      }
-    }
-    return _yesVotes;
-  }
 
-  function countNoVotes() constant returns (uint noVotes){
+
+
+  function results() constant returns (uint yesVotes, uint noVotes){
+    uint _yesVotes = 0;
     uint _noVotes = 0;
     for(uint i=0; i<voted.length;i++){
       if(votes[voted[i]]==VoteTypes.No){
         _noVotes++;
       }
-    }
-    return _noVotes;
-  }
-  
-
-  function countYesVotesWeightedByTokens() constant returns (uint yesVotesWeightedByTokens){
-    uint _yesVotes = 0;
-    for(uint i=0; i<voted.length;i++){
       if(votes[voted[i]]==VoteTypes.Yes){
-        _yesVotes = _yesVotes + theDAO.balanceOf(voted[i]);
+        _yesVotes++;
       }
     }
-    return _yesVotes;
+    return ( _yesVotes, _noVotes );
   }
 
-  function countNoVotesWeightedByTokens() constant returns (uint noVotesWeightedByTokens){
+
+
+  function resultsWeightedByTokens() constant returns (uint yesVotes, uint noVotes){
+    uint _yesVotes = 0;
     uint _noVotes = 0;
     for(uint i=0; i<voted.length;i++){
       if(votes[voted[i]]==VoteTypes.No){
         _noVotes = _noVotes + theDAO.balanceOf(voted[i]);
       }
+      if(votes[voted[i]]==VoteTypes.Yes){
+        _yesVotes = _yesVotes + theDAO.balanceOf(voted[i]);
+      }
     }
-    return _noVotes;
+    return ( _yesVotes, _noVotes );
+  }
+
   }
 
   function kill() {
