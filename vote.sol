@@ -1,31 +1,35 @@
+pragma solidity 0.4.25;
 contract Vote {
   address owner;
   enum VoteTypes { NotVoted, Yes, No }
   mapping (address => VoteTypes) public votes;
   address[] public voters;
   string public question;
-  DAO theDAO = DAO(0xbb9bc244d798123fde783fcc1c72d3bb8c189413);
-  modifier onlyOwner() {if ( msg.sender != owner ) throw; _}
-  function Vote(string _question) {
+  ERC20 theDAO = ERC20(0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413);
+  modifier onlyOwner() {require( msg.sender == owner ); _;}
+
+
+
+  constructor(string _question) public{
     question = _question;
     owner=msg.sender;
     votes[0x0000000000000000000000000000000000000000]=VoteTypes.NotVoted;
   }
 
-  function voteYes() returns (bool success) {
+  function voteYes() public returns (bool success) {
     if(!addressInArray(msg.sender)){voters.push(msg.sender);}
     votes[msg.sender] = VoteTypes.Yes;
     return true;
   }
 
-  function voteNo() returns (bool success) {
+  function voteNo() public returns (bool success) {
     if(!addressInArray(msg.sender)){voters.push(msg.sender);}
     votes[msg.sender]=VoteTypes.No;
     return true;
   }
 
-  function removeVote() {
-    if(!addressInArray(msg.sender)) throw;
+  function removeVote() public {
+    require (addressInArray(msg.sender));
     votes[msg.sender]=VoteTypes.NotVoted;
     for(uint i=0; i<voters.length;i++){
       if(voters[i]==msg.sender){
@@ -34,19 +38,10 @@ contract Vote {
     }
   }
 
-  function addressInArray(address inAddress) private returns (bool inArray){
-    for(uint i=0; i<voters.length;i++){
-      if(voters[i]==inAddress){
-        return true;
-      }
-    }
-    return false;
-  }
 
 
 
-
-  function results() constant returns (uint yesVotes, uint noVotes){
+  function results() public view returns (uint yesVotes, uint noVotes){
     uint _yesVotes = 0;
     uint _noVotes = 0;
     for(uint i=0; i<voters.length;i++){
@@ -62,7 +57,7 @@ contract Vote {
 
 
 
-  function resultsWeightedByTokens() constant returns (uint yesVotes, uint noVotes){
+  function resultsWeightedByTokens() public view returns (uint yesVotes, uint noVotes){
     uint _yesVotes = 0;
     uint _noVotes = 0;
     for(uint i=0; i<voters.length;i++){
@@ -76,7 +71,7 @@ contract Vote {
     return ( _yesVotes, _noVotes );
   }
 
-  function resultsWeightedByEther() constant returns (uint yesVotes, uint noVotes){
+  function resultsWeightedByEther() public view returns (uint yesVotes, uint noVotes){
     uint _yesVotes = 0;
     uint _noVotes = 0;
     for(uint i=0; i<voters.length;i++){
@@ -90,10 +85,20 @@ contract Vote {
     return ( _yesVotes, _noVotes );
   }
 
-  function kill() onlyOwner {
-    suicide(owner);
+  function kill() public onlyOwner {
+    selfdestruct(owner);
+  }
+
+  function addressInArray(address inAddress) private view returns (bool inArray){
+    for(uint i=0; i<voters.length;i++){
+      if(voters[i]==inAddress){
+        return true;
+      }
+    }
+    return false;
   }
 }
-contract DAO {
-    function balanceOf(address _owner) constant returns (uint256 balance);
+
+contract ERC20 {
+    function balanceOf(address tokenOwner) public view returns (uint balance);
 }
